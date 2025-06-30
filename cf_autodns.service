@@ -1,0 +1,37 @@
+[Unit]
+Description=Cloudflare Auto-DNS for Nginx Proxy Manager
+After=network.target
+
+[Service]
+Type=simple
+
+# IMPORTANT: Run as a non-root user that has read access to WATCH_DIR
+# and owns BASE_DIR.
+User=your_user
+
+# The script manages its own lock, so we call it directly.
+ExecStart=/path/to/your/cf_autodns.sh
+
+# --- Configuration (Environment Variables) ---
+# These variables MUST be configured for the script to run.
+
+# 1. Security: Provide the Cloudflare API Token.
+Environment="CF_API_TOKEN=YOUR_CLOUDFLARE_API_TOKEN"
+
+# 2. Paths: Set the working and watch directories.
+Environment="BASE_DIR=/path/to/your/cf_autodns_data_dir"
+Environment="WATCH_DIR=/path/to/your/npm/proxy_host_dir"
+
+# 3. (Optional) Debugging: Set to true for verbose logging.
+Environment="DEBUG_MODE=false"
+
+# --- Reliability ---
+Restart=on-failure
+RestartSec=5
+
+# --- Logging ---
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
